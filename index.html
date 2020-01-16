@@ -82,9 +82,13 @@
     
     <div class="article-meta">
       <a href="/2020/01/16/jvm%E5%AD%97%E8%8A%82%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/" class="article-date">
-  <time datetime="2020-01-16T04:24:07.621Z" itemprop="datePublished">2020-01-16</time>
+  <time datetime="2020-01-16T03:18:53.000Z" itemprop="datePublished">2020-01-16</time>
 </a>
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+  </div>
+
       
       
       
@@ -100,17 +104,17 @@
       
 
       
-      <h1 id="jvm字节码学习实验报告"><a href="#jvm字节码学习实验报告" class="headerlink" title="jvm字节码学习实验报告"></a>jvm字节码学习实验报告</h1><h2 id="试验背景"><a href="#试验背景" class="headerlink" title="试验背景"></a>试验背景</h2><p>前些天买了一本《深入理解JVM虚拟机》第三版，之前只看过前5章，刚好补了门票看后边的章节。<br>看到class字节码的部分，有一句话引起了我的注意</p>
+      <h1 id="jvm字节码学习实验报告"><a href="#jvm字节码学习实验报告" class="headerlink" title="jvm字节码学习实验报告"></a>jvm字节码学习实验报告</h1><h2 id="实验背景"><a href="#实验背景" class="headerlink" title="实验背景"></a>实验背景</h2><p>前些天买了一本《深入理解JVM虚拟机》第三版，之前只看过前5章，刚好补了门票看后边的章节。<br>看到class字节码的部分，有一句话引起了我的注意</p>
 <blockquote>
 <p><img src="/2020/01/16/jvm%E5%AD%97%E8%8A%82%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/B8087A95-A470-42D5-B64E-8D70A834DB8E.png" alt="1fc9c1590090f7a6448e9ff778c42e5c"></p>
 </blockquote>
 <p>感觉和直觉相悖，因此做了此实验，验证的同时，巩固一下对class文件的理解。</p>
-<h2 id="试验步骤"><a href="#试验步骤" class="headerlink" title="试验步骤"></a>试验步骤</h2><h3 id="vim简单编写了一个java文件"><a href="#vim简单编写了一个java文件" class="headerlink" title="vim简单编写了一个java文件"></a>vim简单编写了一个java文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class A &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int a &#x3D; -1;</span><br><span class="line">        byte b &#x3D; (byte) a;</span><br><span class="line">        System.out.println(b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><h3 id="vim简单编写了一个java文件"><a href="#vim简单编写了一个java文件" class="headerlink" title="vim简单编写了一个java文件"></a>vim简单编写了一个java文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class A &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int a &#x3D; -1;</span><br><span class="line">        byte b &#x3D; (byte) a;</span><br><span class="line">        System.out.println(b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="编译并查看"><a href="#编译并查看" class="headerlink" title="编译并查看"></a>编译并查看</h3><p>查看class的结果如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">zsh&gt; javap -verbose A.class</span><br><span class="line">Classfile &#x2F;Users&#x2F;guoxiaodong&#x2F;workspace&#x2F;safehouse&#x2F;A.class</span><br><span class="line">  Last modified 2020-1-14; size 385 bytes</span><br><span class="line">  MD5 checksum 9d5c848075956b4c3961a38b974ebfb8</span><br><span class="line">  Compiled from &quot;A.java&quot;</span><br><span class="line">public class A</span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: 52</span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 &#x3D; Methodref          #5.#14         &#x2F;&#x2F; java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">   #2 &#x3D; Fieldref           #15.#16        &#x2F;&#x2F; java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">   #3 &#x3D; Methodref          #17.#18        &#x2F;&#x2F; java&#x2F;io&#x2F;PrintStream.println:(I)V</span><br><span class="line">   #4 &#x3D; Class              #19            &#x2F;&#x2F; A</span><br><span class="line">   #5 &#x3D; Class              #20            &#x2F;&#x2F; java&#x2F;lang&#x2F;Object</span><br><span class="line">   #6 &#x3D; Utf8               &lt;init&gt;</span><br><span class="line">   #7 &#x3D; Utf8               ()V</span><br><span class="line">   #8 &#x3D; Utf8               Code</span><br><span class="line">   #9 &#x3D; Utf8               LineNumberTable</span><br><span class="line">  #10 &#x3D; Utf8               main</span><br><span class="line">  #11 &#x3D; Utf8               ([Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">  #12 &#x3D; Utf8               SourceFile</span><br><span class="line">  #13 &#x3D; Utf8               A.java</span><br><span class="line">  #14 &#x3D; NameAndType        #6:#7          &#x2F;&#x2F; &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #15 &#x3D; Class              #21            &#x2F;&#x2F; java&#x2F;lang&#x2F;System</span><br><span class="line">  #16 &#x3D; NameAndType        #22:#23        &#x2F;&#x2F; out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">  #17 &#x3D; Class              #24            &#x2F;&#x2F; java&#x2F;io&#x2F;PrintStream</span><br><span class="line">  #18 &#x3D; NameAndType        #25:#26        &#x2F;&#x2F; println:(I)V</span><br><span class="line">  #19 &#x3D; Utf8               A</span><br><span class="line">  #20 &#x3D; Utf8               java&#x2F;lang&#x2F;Object</span><br><span class="line">  #21 &#x3D; Utf8               java&#x2F;lang&#x2F;System</span><br><span class="line">  #22 &#x3D; Utf8               out</span><br><span class="line">  #23 &#x3D; Utf8               Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">  #24 &#x3D; Utf8               java&#x2F;io&#x2F;PrintStream</span><br><span class="line">  #25 &#x3D; Utf8               println</span><br><span class="line">  #26 &#x3D; Utf8               (I)V</span><br><span class="line">&#123;</span><br><span class="line">  public A();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack&#x3D;1, locals&#x3D;1, args_size&#x3D;1</span><br><span class="line">         0: aload_0</span><br><span class="line">         1: invokespecial #1                  &#x2F;&#x2F; Method java&#x2F;lang&#x2F;Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         4: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 1: 0</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    descriptor: ([Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack&#x3D;2, locals&#x3D;3, args_size&#x3D;1</span><br><span class="line">         0: iconst_m1</span><br><span class="line">         1: istore_1</span><br><span class="line">         2: iload_1</span><br><span class="line">         3: i2b</span><br><span class="line">         4: istore_2</span><br><span class="line">         5: getstatic     #2                  &#x2F;&#x2F; Field java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">         8: iload_2</span><br><span class="line">         9: invokevirtual #3                  &#x2F;&#x2F; Method java&#x2F;io&#x2F;PrintStream.println:(I)V</span><br><span class="line">        12: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 4: 0</span><br><span class="line">        line 5: 2</span><br><span class="line">        line 6: 5</span><br><span class="line">        line 7: 12</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: &quot;A.java&quot;</span><br></pre></td></tr></table></figure>
 
-<h3 id="试验结果"><a href="#试验结果" class="headerlink" title="试验结果"></a>试验结果</h3><p>查看发现调用了<code>i2b</code>的指令，但是实际执行代码，print出来的b值还是-1。</p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p>查看发现调用了<code>i2b</code>的指令，但是实际执行代码，print出来的b值还是-1。</p>
 <h3 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h3><p>因为java里int是用补码来存储的， 因此<code>a=-1</code>， a存储的4个字节应该为<code>0xFFFFFFFF</code>，因此<code>i2b</code>后，b的一个字节应该是<code>0xFF</code>，因此还是-1。</p>
 <p>因为int范围太大， 使用short可以更简单的计算字节码。<br>下边举几个short-&gt;byte丢失符号的例子:</p>
 <ol>
@@ -118,8 +122,8 @@
 <li>-32767(0x8001) -&gt; 1(0x01)</li>
 <li>-32768(0x8000) -&gt; 0(0x00) //补码里-0用来表示最大的负数</li>
 </ol>
-<h2 id="试验总结"><a href="#试验总结" class="headerlink" title="试验总结"></a>试验总结</h2><ol>
-<li>通过试验， 加深class文件结构的理解</li>
+<h2 id="实验总结"><a href="#实验总结" class="headerlink" title="实验总结"></a>实验总结</h2><ol>
+<li>通过实验， 加深class文件结构的理解</li>
 <li>温习了补码的知识点</li>
 </ol>
 
@@ -128,145 +132,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://gxdgodgxd.github.io/2020/01/16/jvm%E5%AD%97%E8%8A%82%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/" data-id="ck5g8aq0s0000p6432htu4vck"
+      <a data-url="http://gxdgodgxd.github.io/2020/01/16/jvm%E5%AD%97%E8%8A%82%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/" data-id="ck5gc0ikn0001wj43dyotcsoy"
         class="article-share-link">分享</a>
       
-    </footer>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/" rel="tag">JVM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%9E%E9%AA%8C/" rel="tag">实验</a></li></ul>
 
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-abc" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/01/16/abc/"
-    >abc</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/01/16/abc/" class="article-date">
-  <time datetime="2020-01-16T03:18:53.000Z" itemprop="datePublished">2020-01-16</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="title"><a href="#title" class="headerlink" title="title"></a>title</h2><p><img src="/2020/01/16/abc/B8087A95-A470-42D5-B64E-8D70A834DB8E.png" alt="1fc9c1590090f7a6448e9ff778c42e5c"></p>
-
-      
-      <!-- 打赏 -->
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://gxdgodgxd.github.io/2020/01/16/abc/" data-id="ck5g811z20001vg439z4j8rqq"
-        class="article-share-link">分享</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-hello-world" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/01/16/hello-world/"
-    >Hello World</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/01/16/hello-world/" class="article-date">
-  <time datetime="2020-01-16T02:24:04.382Z" itemprop="datePublished">2020-01-16</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-      <!-- 打赏 -->
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://gxdgodgxd.github.io/2020/01/16/hello-world/" data-id="ck5g811z40002vg43ep83a68l"
-        class="article-share-link">分享</a>
-      
     </footer>
 
   </div>
@@ -327,7 +197,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://gxdgodgxd.github.io/2020/01/14/First-Blog-by-Hexo/" data-id="ck5g811yt0000vg43b7a4apys"
+      <a data-url="http://gxdgodgxd.github.io/2020/01/14/First-Blog-by-Hexo/" data-id="ck5gc0iki0000wj43fg4l65fa"
         class="article-share-link">分享</a>
       
     </footer>
